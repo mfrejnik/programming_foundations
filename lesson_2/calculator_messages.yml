@@ -1,15 +1,32 @@
-welcome: "Welcome to calculator! Enter your name:"
-valid_name: "Make sure to use valid name."
-hello: "Hello"
-:question: |
-  What is the operation you want to perform?
-    1) Add
-    2) Subtract
-    3) Multiply
-    4) Divide
-  Choose from 1 to 4...
-valid_operator: "Enter the valid number choice from 1 to 4"
-two_numbers: "the two numbers ..."
-the_result: "The result is"
-another_operation: "Do you want to perform another calculation? (Y to calculate again)"
-thank_you: "Thank you for using the calculator. Good bye!"
+en:
+  welcome: "Welcome to calculator! Enter your name:"
+  valid_name: "Make sure to use valid name."
+  hello: "Hello"
+  :question: |
+    What is the operation you want to perform?
+      1) Add
+      2) Subtract
+      3) Multiply
+      4) Divide
+    Choose from 1 to 4...
+  valid_operator: "Enter the valid number choice from 1 to 4"
+  two_numbers: "the two numbers ..."
+  the_result: "The result is"
+  another_operation: "Do you want to perform another calculation? (Y to calculate again)"
+  thank_you: "Thank you for using the calculator. Good bye!"
+es:
+  welcome: "Bienvenido a la calculadora! Entre su nombre:"
+  valid_name: "Asegúrese de entrar un nombre válido."
+  hello: "Hola"
+  :question: |
+    What is the operation you want to perform?
+      1) Add
+      2) Subtract
+      3) Multiply
+      4) Divide
+    Choose from 1 to 4...
+  valid_operator: "Enter the valid number choice from 1 to 4"
+  two_numbers: "the two numbers ..."
+  the_result: "The result is"
+  another_operation: "Do you want to perform another calculation? (Y to calculate again)"
+  thank_you: "Thank you for using the calculator. Good bye!"

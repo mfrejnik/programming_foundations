@@ -3,8 +3,13 @@
 # perform the operation on two numbers
 # output the results
 
+LANGUAGE = 'es'
 require 'yaml'
 MESSAGES = YAML.load_file('calculator_messages.yml')
+
+def messages(key, lang='en')
+  MESSAGES[lang][key]
+end
 
 def float?(input)
   Float(input) rescue false
@@ -18,7 +23,12 @@ def valid_number?(number)
   float?(number) || integer?(number)
 end
 
-def prompt(message)
+def prompt(key)
+  if messages(key, LANGUAGE)
+    message = messages(key, LANGUAGE)
+  else
+    message = key
+  end
   Kernel.puts("=> #{message}")
 end
 
@@ -35,20 +45,20 @@ def operation_to_message(operator)
   end
 end
 
-prompt(MESSAGES['welcome'])
+prompt('welcome')
 
 name = ''
 
 loop do
   name = Kernel.gets.chomp()
   if name.empty?()
-    prompt(MESSAGES['valid_name'])
+    prompt('valid_name')
   else
     break
   end
 end
 
-prompt("#{MESSAGES['hello']} #{name}!")
+prompt("#{MESSAGES[LANGUAGE]['hello']} #{name}!")
 
 loop do # main loop
   number1 = ''
@@ -77,7 +87,7 @@ loop do # main loop
     end
   end
 
-  prompt(MESSAGES[:question])
+  prompt(:question)
 
   operator = ''
   loop do
@@ -85,7 +95,7 @@ loop do # main loop
     if %w(1 2 3 4).include?(operator)
       break
     else
-      prompt(MESSAGES['valid_operator'])
+      prompt('valid_operator')
     end
   end
 
@@ -103,10 +113,10 @@ loop do # main loop
               number1.to_f() / number2.to_f()
             end
 
-  prompt("#{MESSAGES['the_result']} #{result}.")
-  prompt(MESSAGES['another_operation'])
+  prompt("#{MESSAGES[LANGUAGE]['the_result']} #{result}.")
+  prompt('another_operation')
   answer = Kernel.gets().chomp()
   break unless answer.downcase().start_with?('y')
 end
 
-prompt(MESSAGES['thank_you'])
+prompt('thank_you')
