@@ -3,6 +3,9 @@
 # perform the operation on two numbers
 # output the results
 
+require 'yaml'
+MESSAGES = YAML.load_file('calculator_messages.yml')
+
 def float?(input)
   Float(input) rescue false
 end
@@ -32,20 +35,20 @@ def operation_to_message(operator)
   end
 end
 
-prompt("Welcome to calculator! Enter your name:")
+prompt(MESSAGES['welcome'])
 
 name = ''
 
 loop do
   name = Kernel.gets.chomp()
   if name.empty?()
-    prompt("Make sure to use valid name.")
+    prompt(MESSAGES['valid_name'])
   else
     break
   end
 end
 
-prompt("Hello #{name}!")
+prompt("#{MESSAGES['hello']} #{name}!")
 
 loop do # main loop
   number1 = ''
@@ -74,15 +77,7 @@ loop do # main loop
     end
   end
 
-  question = <<-MSG
-  What is the operation you want to perform?
-      1) Add
-      2) Subtract
-      3) Multiply
-      4) Divide
-    Choose from 1 to 4...
-  MSG
-  prompt(question)
+  prompt(MESSAGES[:question])
 
   operator = ''
   loop do
@@ -90,11 +85,11 @@ loop do # main loop
     if %w(1 2 3 4).include?(operator)
       break
     else
-      prompt("Enter the valid number choice from 1 to 4")
+      prompt(MESSAGES['valid_operator'])
     end
   end
 
-  prompt("#{operation_to_message(operator)} the two numbers ...")
+  prompt("#{operation_to_message(operator)} #{MESSAGES['two_numbers']}")
   sleep(1)
 
   result =  case operator
@@ -108,10 +103,10 @@ loop do # main loop
               number1.to_f() / number2.to_f()
             end
 
-  prompt("The result is #{result}.")
-  prompt("Do you want to perform another calculation? (Y to calculate again)")
+  prompt("#{MESSAGES['the_result']} #{result}.")
+  prompt(MESSAGES['another_operation'])
   answer = Kernel.gets().chomp()
   break unless answer.downcase().start_with?('y')
 end
 
-prompt("Thank you for using the calculator. Good bye!")
+prompt(MESSAGES['thank_you'])
