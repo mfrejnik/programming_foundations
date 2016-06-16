@@ -24,7 +24,6 @@ def operation_to_message(operator)
   end
 end
 
-
 prompt("Welcome to calculator! Enter your name:")
 
 name = ''
@@ -40,9 +39,7 @@ end
 
 prompt("Hello #{name}!")
 
-loop do #main loop
-
-
+loop do # main loop
   number1 = ''
 
   loop do
@@ -54,7 +51,6 @@ loop do #main loop
     else
       prompt "Something is wrong with the number1"
     end
-
   end
 
   number2 = ''
@@ -68,7 +64,6 @@ loop do #main loop
     else
       prompt "Something is wrong with the number2"
     end
-
   end
 
   question = <<-MSG
@@ -96,20 +91,19 @@ loop do #main loop
 
   result =  case operator
             when '1'
-             number1.to_i() + number2.to_i()
+              number1.to_i() + number2.to_i()
             when '2'
-             number1.to_i() - number2.to_i()
+              number1.to_i() - number2.to_i()
             when '3'
-             result = number1.to_i() * number2.to_i()
+              number1.to_i() * number2.to_i()
             when '4'
-             result = number1.to_f() / number2.to_f()
-  end
+              number1.to_f() / number2.to_f()
+            end
 
   prompt("The result is #{result}.")
   prompt("Do you want to perform another calculation? (Y to calculate again)")
   answer = Kernel.gets().chomp()
   break unless answer.downcase().start_with?('y')
-
 end
 
 prompt("Thank you for using the calculator. Good bye!")
