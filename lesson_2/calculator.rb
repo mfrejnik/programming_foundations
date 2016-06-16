@@ -3,8 +3,16 @@
 # perform the operation on two numbers
 # output the results
 
+def float?(input)
+  Float(input) rescue false
+end
+
+def integer?(input)
+  integer(input) rescue false
+end
+
 def valid_number?(number)
-  number.to_i() != 0
+  float?(number) || integer?(number)
 end
 
 def prompt(message)
