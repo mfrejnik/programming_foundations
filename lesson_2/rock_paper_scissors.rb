@@ -1,23 +1,20 @@
-VALID_CHOICES = %w[rock paper scissors]
+VALID_CHOICES = %w(rock paper scissors)
+
+def win?(first, second)
+  (first == 'rock' && second == 'scissors') ||
+    (first == 'scissors' && second == 'paper') ||
+    (first == 'paper' && second == 'rock')
+end
+
 def display_results(user, computer)
-  if (user == 'rock' && computer == 'scissors') ||
-    (user == 'scissors' && computer == 'paper') ||
-    (user == 'paper' && computer == 'rock')
+  if win?(user, computer)
     prompt("You won!")
-  elsif (computer == 'rock' && user == 'scissors') ||
-    (computer == 'scissors' && user == 'paper') ||
-    (computer == 'paper' && user == 'rock')
+  elsif win?(computer, user)
     prompt("Computer won! AI or what ?!")
   else
     prompt("It's a tie")
   end
 end
-
-def test_method
-  prompt('test message')
-end
-
-test_method
 
 def prompt(message)
   Kernel.puts("=> #{message}")
