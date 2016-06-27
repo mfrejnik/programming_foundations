@@ -1,16 +1,14 @@
 VALID_CHOICES = %w(rock paper scissors spock lizard)
+WIN_OPTIONS = {
+  'rock' => %w(scissors lizard),
+  'paper' => %w(rock spock),
+  'scissors' => %w(paper lizard),
+  'spock' => %w(rock scissors),
+  'lizard' => %w(spock paper)
+}
 
 def win?(first, second)
-  (first == 'rock' && second == 'scissors') ||
-    (first == 'scissors' && second == 'paper') ||
-    (first == 'paper' && second == 'rock') ||
-    (first == 'rock' && second == 'lizard') ||
-    (first == 'lizard' && second == 'spock') ||
-    (first == 'spock' && second == 'scissors') ||
-    (first == 'scissors' && second == 'lizard') ||
-    (first == 'lizard' && second == 'paper') ||
-    (first == 'paper' && second == 'spock') ||
-    (first == 'spock' && second == 'rock')
+  WIN_OPTIONS[first].include?(second)
 end
 
 def display_match_winner(scores)
