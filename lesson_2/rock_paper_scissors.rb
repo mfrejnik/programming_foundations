@@ -21,7 +21,7 @@ def display_match_winner(scores)
   end
 end
 
-def display_results(user, computer)
+def display_round_result(user, computer)
   if win?(user, computer)
     prompt("You won this round!")
   elsif win?(computer, user)
@@ -64,7 +64,7 @@ loop do
 
     computer_choice = VALID_CHOICES.sample()
     prompt("You chose #{user_choice} and computer chose #{computer_choice}")
-    display_results(user_choice, computer_choice)
+    display_round_result(user_choice, computer_choice)
     scores = count_score(user_choice, computer_choice, scores)
     prompt("Computer score is #{scores[:computer]} and your score is #{scores[:user]}")
   end
