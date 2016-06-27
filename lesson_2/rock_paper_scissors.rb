@@ -43,8 +43,12 @@ def prompt(message)
   Kernel.puts("=> #{message}")
 end
 
+def cls
+  system('clear') || system('cls')
+end
+
 prompt("Welcome in Rock, Paper, Scissor game!")
-prompt("You play with computer and whoever reach 5 points wins.")
+prompt("You play with computer and whoever reach 5 points, wins.")
 prompt("There is no score for a tie added.")
 
 loop do
@@ -75,6 +79,7 @@ loop do
   display_match_winner(scores)
   prompt("Do you want to play one more time? Choose (Y) for yes.")
   continue_game = Kernel.gets().chomp()
+  cls()
   break unless continue_game.downcase().start_with?('y')
 end
 
