@@ -13,38 +13,63 @@ def win?(first, second)
     (first == 'spock' && second == 'rock')
 end
 
+def display_match_winner(scores)
+  if scores[:user] == 5
+    prompt("You have won the match!")
+  else
+    prompt("Computer has won the match!")
+  end
+end
+
 def display_results(user, computer)
   if win?(user, computer)
-    prompt("You won!")
+    prompt("You won this round!")
   elsif win?(computer, user)
-    prompt("Computer won! AI or what ?!")
+    prompt("Computer won this round! AI or what ?!")
   else
-    prompt("It's a tie")
+    prompt("It's a tie in this round.")
   end
+end
+
+def count_score(user, computer, scores)
+  if win?(user, computer)
+    scores[:user] += 1
+  elsif win?(computer, user)
+    scores[:computer] += 1
+  end
+  scores
 end
 
 def prompt(message)
   Kernel.puts("=> #{message}")
 end
 
-prompt("Welcom in Rock, Paper, Scissor game!")
+prompt("Welcome in Rock, Paper, Scissor game!")
+prompt("You play with computer and whoever reach 5 points wins.")
+prompt("There is no score for a tie added.")
 
 loop do
-  user_choice = ''
-  loop do
-    prompt("Choose one: #{VALID_CHOICES.join(', ')}")
-    user_choice = Kernel.gets().chomp()
-    if VALID_CHOICES.include?(user_choice)
-      break
-    else
-      prompt("That's not a valid choice.")
+  scores = { user: 0, computer: 0 }
+  while scores[:user] < 5 && scores[:computer] < 5
+    user_choice = ''
+    loop do
+      prompt("Choose one: #{VALID_CHOICES.join(', ')}")
+      user_choice = Kernel.gets().chomp()
+      if VALID_CHOICES.include?(user_choice)
+        break
+      else
+        prompt("That's not a valid choice.")
+      end
     end
+
+    computer_choice = VALID_CHOICES.sample()
+    prompt("You chose #{user_choice} and computer chose #{computer_choice}")
+    display_results(user_choice, computer_choice)
+    scores = count_score(user_choice, computer_choice, scores)
+    prompt("Computer score is #{scores[:computer]} and your score is #{scores[:user]}")
   end
 
-  computer_choice = VALID_CHOICES.sample()
-  prompt("You chose #{user_choice} and computer chose #{computer_choice}")
-  display_results(user_choice, computer_choice)
-
+  display_match_winner(scores)
   prompt("Do you want to play one more time? Choose (Y) for yes.")
   continue_game = Kernel.gets().chomp()
   break unless continue_game.downcase().start_with?('y')
