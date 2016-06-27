@@ -1,4 +1,5 @@
 VALID_CHOICES = %w(rock paper scissors spock lizard)
+VALID_CHOICES_ABBR = %w(r p sc sp l)
 WIN_OPTIONS = {
   'rock' => %w(scissors lizard),
   'paper' => %w(rock spock),
@@ -51,9 +52,13 @@ loop do
   while scores[:user] < 5 && scores[:computer] < 5
     user_choice = ''
     loop do
-      prompt("Choose one: #{VALID_CHOICES.join(', ')}")
+      prompt("Choose one of the option by writing abbreviation:")
+      VALID_CHOICES.each_with_index do |choice, idx|
+        puts("\t '#{VALID_CHOICES_ABBR[idx]}' for #{choice}")
+      end
       user_choice = Kernel.gets().chomp()
-      if VALID_CHOICES.include?(user_choice)
+      if VALID_CHOICES_ABBR.include?(user_choice)
+        user_choice = VALID_CHOICES[VALID_CHOICES_ABBR.index(user_choice).to_i]
         break
       else
         prompt("That's not a valid choice.")
