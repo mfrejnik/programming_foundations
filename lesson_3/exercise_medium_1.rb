@@ -53,10 +53,6 @@ def factors(number)
   divisors
 end
 
-
-#
-# Question 6
-
 #
 # Question 7
 limit = 150
