@@ -58,17 +58,40 @@ end
 def place_piece!(board, current_player)
   choice = ''
   if current_player == COMPUTER_NAME
-    choice = empty_squares(board).sample
-    board[choice] = COMPUTER_MARKER
+    computer_place_piece!(board)
   else
-    loop do
-      prompt "Please make a choice from #{joinor(empty_squares(board))}"
-      choice = gets.chomp.to_i
-      break if empty_squares(board).include? choice
-      prompt "That's not a valid choice"
-    end
-    board[choice] = PLAYER_MARKER
+    player_place_piece!(board)
   end
+end
+
+def computer_place_piece!(board)
+  square = nil
+  WINNING_LINES.each do |line|
+    square = find_at_risk_square(line, board)
+    break if square
+  end
+  square = empty_squares(board).sample unless square
+  board[square] = COMPUTER_MARKER
+end
+
+def find_at_risk_square(line, board)
+  if board.values_at(*line).count(PLAYER_MARKER) == 2
+    board.select { |k, v| line.include?(k) && v == ' ' }.keys.first
+    binding.pry
+  else
+    nil
+  end
+end
+
+def player_place_piece!(board)
+  choice = ''
+  loop do
+    prompt "Please make a choice from #{joinor(empty_squares(board))}"
+    choice = gets.chomp.to_i
+    break if empty_squares(board).include? choice
+    prompt "That's not a valid choice"
+  end
+  board[choice] = PLAYER_MARKER
 end
 
 def alternate_player(current_player)
