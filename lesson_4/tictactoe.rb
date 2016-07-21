@@ -55,20 +55,28 @@ def empty_squares(board)
   board.keys.select { |num| board[num] == INITIAL_MARKER }
 end
 
-def user_place_mark!(board)
-  user_choice = ''
-  loop do
-    prompt "Please make a choice from #{joinor(empty_squares(board))}"
-    user_choice = gets.chomp.to_i
-    break if empty_squares(board).include? user_choice
-    prompt "That's not a valid choice"
+def place_piece!(board, current_player)
+  choice = ''
+  if current_player == COMPUTER_NAME
+    choice = empty_squares(board).sample
+    board[choice] = COMPUTER_MARKER
+  else
+    loop do
+      prompt "Please make a choice from #{joinor(empty_squares(board))}"
+      choice = gets.chomp.to_i
+      break if empty_squares(board).include? choice
+      prompt "That's not a valid choice"
+    end
+    board[choice] = PLAYER_MARKER
   end
-  board[user_choice] = PLAYER_MARKER
 end
 
-def computer_place_mark!(board)
-  computer_choice = empty_squares(board).sample
-  board[computer_choice] = COMPUTER_MARKER
+def alternate_player(current_player)
+  if current_player == PLAYER_NAME
+    current_player = COMPUTER_NAME
+  else
+    current_player = PLAYER_NAME
+  end
 end
 
 def someone_won?(board)
@@ -120,13 +128,11 @@ loop do
   scores = { player: 0, computer: 0 }
   loop do
     board = init_board
-
+    current_player = PLAYER_NAME
     loop do
       display_board(board)
-      user_place_mark!(board)
-      break if someone_won?(board) || board_is_full?(board)
-
-      computer_place_mark!(board)
+      place_piece!(board, current_player)
+      current_player = alternate_player(current_player)
       break if someone_won?(board) || board_is_full?(board)
     end
 
