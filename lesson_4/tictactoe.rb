@@ -1,7 +1,11 @@
 require 'pry'
+require 'io/console'
+
 INITIAL_MARKER = ' '.freeze
 PLAYER_MARKER = 'X'.freeze
 COMPUTER_MARKER = 'O'.freeze
+PLAYER_NAME = 'Player'.freeze
+COMPUTER_NAME = 'Computer'.freeze
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # cols
                 [[1, 5, 9], [3, 5, 7]].freeze       # diagonals
@@ -18,6 +22,8 @@ end
 def display_board(brd)
   clean_screen
   puts "You're a #{PLAYER_MARKER}. Computer is an #{COMPUTER_MARKER}"
+  puts "You play with computer and whoever reach 5 points, wins."
+  puts "There is no score for a tie added."
   puts ""
   puts "     |     |"
   puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
@@ -40,6 +46,11 @@ def init_board
   new_board
 end
 
+def joinor(arr, delimiter=', ', word='or')
+  arr[-1] = "#{word} #{arr.last}" if arr.size > 1
+  arr.size == 2 ? arr.join(' ') : arr.join(delimiter)
+end
+
 def empty_squares(board)
   board.keys.select { |num| board[num] == INITIAL_MARKER }
 end
@@ -47,7 +58,7 @@ end
 def user_place_mark!(board)
   user_choice = ''
   loop do
-    prompt "Please make a choice from #{empty_squares(board).join(', ')}"
+    prompt "Please make a choice from #{joinor(empty_squares(board))}"
     user_choice = gets.chomp.to_i
     break if empty_squares(board).include? user_choice
     prompt "That's not a valid choice"
@@ -67,9 +78,9 @@ end
 def detect_winner(board)
   WINNING_LINES.each do |line|
     if board.values_at(*line).count(PLAYER_MARKER) == 3
-      return 'Player'
+      return PLAYER_NAME
     elsif board.values_at(*line).count(COMPUTER_MARKER) == 3
-      return 'Computer'
+      return COMPUTER_NAME
     end
   end
   nil
@@ -79,26 +90,60 @@ def board_is_full?(board)
   empty_squares(board).empty?
 end
 
-loop do
-  board = init_board
-
-  loop do
-    display_board(board)
-    user_place_mark!(board)
-    break if someone_won?(board) || board_is_full?(board)
-
-    computer_place_mark!(board)
-    break if someone_won?(board) || board_is_full?(board)
-  end
-
-  display_board(board)
-
-  if someone_won?(board)
-    prompt "#{detect_winner(board)} has won!"
+def count_score(winner, scores)
+  if winner == COMPUTER_NAME
+    scores[:computer] += 1
   else
-    prompt "It's a tie"
+    scores[:player] += 1
+  end
+end
+
+def display_match_winner(scores)
+  if scores[:player] == 5
+    prompt("You have won the match!")
+    prompt("#{scores[:player]} to #{scores[:computer]}!")
+  else
+    prompt("Computer has won the match!")
+    prompt("#{scores[:computer]} to #{scores[:player]}!")
+  end
+end
+
+def display_round_score(scores)
+  prompt("Computer score is: #{scores[:computer]}")
+  prompt("Your score is:     #{scores[:player]}")
+  puts
+  prompt("Press any key to continue")
+  STDIN.getch
+end
+
+loop do
+  scores = { player: 0, computer: 0 }
+  loop do
+    board = init_board
+
+    loop do
+      display_board(board)
+      user_place_mark!(board)
+      break if someone_won?(board) || board_is_full?(board)
+
+      computer_place_mark!(board)
+      break if someone_won?(board) || board_is_full?(board)
+    end
+
+    display_board(board)
+
+    if someone_won?(board)
+      winner = detect_winner(board)
+      prompt "#{winner} has won this round!"
+      count_score(winner, scores)
+    else
+      prompt "It's a tie"
+    end
+    display_round_score(scores)
+    break if scores[:player] == 5 || scores[:computer] == 5
   end
 
+  display_match_winner(scores)
   prompt "Do you want to play again? (y for yes)"
   another_game = gets.chomp
   break unless another_game.downcase.start_with?('y')
