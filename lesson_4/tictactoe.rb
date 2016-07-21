@@ -6,6 +6,7 @@ PLAYER_MARKER = 'X'.freeze
 COMPUTER_MARKER = 'O'.freeze
 PLAYER_NAME = 'Player'.freeze
 COMPUTER_NAME = 'Computer'.freeze
+INITIAL_PLAYER = "choose".freeze
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # cols
                 [[1, 5, 9], [3, 5, 7]].freeze       # diagonals
@@ -18,7 +19,7 @@ def clean_screen
   system('clear') || system('cls')
 end
 
-# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/AbcSize, Metrics/MethodLength
 def display_board(brd)
   clean_screen
   puts "You're a #{PLAYER_MARKER}. Computer is an #{COMPUTER_MARKER}"
@@ -38,7 +39,7 @@ def display_board(brd)
   puts "     |     |"
   puts ""
 end
-# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
 def init_board
   new_board = {}
@@ -56,7 +57,6 @@ def empty_squares(board)
 end
 
 def place_piece!(board, current_player)
-  choice = ''
   if current_player == COMPUTER_NAME
     computer_place_piece!(board)
   else
@@ -66,21 +66,33 @@ end
 
 def computer_place_piece!(board)
   square = nil
+
+  # offense
   WINNING_LINES.each do |line|
-    square = find_at_risk_square(line, board)
+    square = find_at_risk_square(line, board, COMPUTER_MARKER)
     break if square
   end
+
+  # defense
+  unless square
+    WINNING_LINES.each do |line|
+      square = find_at_risk_square(line, board, PLAYER_MARKER)
+      break if square
+    end
+  end
+
   square = empty_squares(board).sample unless square
+
   board[square] = COMPUTER_MARKER
 end
 
-def find_at_risk_square(line, board)
-  if board.values_at(*line).count(PLAYER_MARKER) == 2
-    board.select { |k, v| line.include?(k) && v == ' ' }.keys.first
-    binding.pry
-  else
-    nil
+def find_at_risk_square(line, board, marker)
+  if board.values_at(*line).count(marker) == 2
+    return board.select do |k, v|
+      line.include?(k) && v == INITIAL_MARKER
+    end.keys.first
   end
+  nil
 end
 
 def player_place_piece!(board)
@@ -94,11 +106,29 @@ def player_place_piece!(board)
   board[choice] = PLAYER_MARKER
 end
 
+def choose_player(initial_player)
+  players = { 1 => "Computer", 2 => "Player" }
+  if initial_player == "choose"
+    player_choice = ''
+    loop do
+      prompt "Please choice wcho starts a round:"
+      prompt "\t 1 - for Computer"
+      prompt "\t 2 - for You"
+      player_choice = gets.chomp.to_i
+      break if [1, 2].include?(player_choice)
+      prompt "Choose only 1 or 2!"
+    end
+    players[player_choice]
+  else
+    PLAYER_NAME
+  end
+end
+
 def alternate_player(current_player)
   if current_player == PLAYER_NAME
-    current_player = COMPUTER_NAME
+    COMPUTER_NAME
   else
-    current_player = PLAYER_NAME
+    PLAYER_NAME
   end
 end
 
@@ -151,7 +181,8 @@ loop do
   scores = { player: 0, computer: 0 }
   loop do
     board = init_board
-    current_player = PLAYER_NAME
+    current_player = choose_player(INITIAL_PLAYER)
+
     loop do
       display_board(board)
       place_piece!(board, current_player)
