@@ -177,6 +177,19 @@ def display_round_score(scores)
   STDIN.getch
 end
 
+def another_game?
+  loop do
+    answer = gets.chomp.downcase
+    if %w(y yes).include?(answer)
+      clean_screen
+      break true
+    end
+    break false if %w(n no).include?(answer)
+    prompt("Please enter 'y or 'n'.")
+  end
+end
+
+
 loop do
   scores = { player: 0, computer: 0 }
   loop do
@@ -204,9 +217,8 @@ loop do
   end
 
   display_match_winner(scores)
-  prompt "Do you want to play again? (y for yes)"
-  another_game = gets.chomp
-  break unless another_game.downcase.start_with?('y')
+  prompt "Do you want to play again? (y/yes or n/no)"
+  break unless another_game?
 end
 
 prompt "Thanks for playing Tic Tac Toe! Good bye."
