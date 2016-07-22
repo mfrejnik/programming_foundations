@@ -182,13 +182,12 @@ def another_game?
     answer = gets.chomp.downcase
     if %w(y yes).include?(answer)
       clean_screen
-      break true
+      return true
     end
-    break false if %w(n no).include?(answer)
+    return false if %w(n no).include?(answer)
     prompt("Please enter 'y or 'n'.")
   end
 end
-
 
 loop do
   scores = { player: 0, computer: 0 }
