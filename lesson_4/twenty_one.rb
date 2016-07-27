@@ -20,25 +20,25 @@ def clean_screen
 end
 
 def total(cards)
-  values = cards.map { |card| card[1] }
   sum = 0
 
-  values.each do |value|
+  cards.each do |_suit, rank|
     sum +=
-      if value == "A"
-        11
-      elsif value.to_i == 0 # J, Q, K
-        10
-      else
-        value.to_i
+      case rank
+      when "A" then 11
+      when "J", "Q", "K" then 10
+      else rank.to_i
       end
   end
 
-  values.select { |value| value == "A" }.count.times do
-    sum -= 10 if sum > TOTAL_PLAYER
-  end
+  ace_adjustment(cards, sum)
+end
 
-  sum
+def ace_adjustment(cards, total_points)
+  cards.select { |_suit, rank| rank == "A" }.count.times do
+    total_points -= 10 if total_points > TOTAL_PLAYER
+  end
+  total_points
 end
 
 def initialize_deck
@@ -51,12 +51,12 @@ end
 
 def deal_cards(deck, current_player_cards)
   2.times do
-    current_player_cards << deck.delete(deck.sample)
+    current_player_cards << deck.delete(deck.last)
   end
 end
 
 def hit(deck, current_player_cards)
-  current_player_cards << deck.delete(deck.sample)
+  current_player_cards << deck.delete(deck.last)
 end
 
 def busted?(cards)
@@ -73,17 +73,17 @@ def display_cards(cards, player_name)
   prompt ""
 end
 
-def detect_winner_with_busted(user_cards, dealer_cards)
+def detect_winner(user_cards, dealer_cards)
   total_user_cards = total(user_cards)
   total_dealer_cards = total(dealer_cards)
   if busted?(dealer_cards)
-    return PLAYER_NAME, true
+    return PLAYER_NAME
   elsif busted?(user_cards)
-    return DEALER_NAME, true
+    return DEALER_NAME
   elsif total_dealer_cards < total_user_cards
-    return PLAYER_NAME, false
+    return PLAYER_NAME
   elsif total_dealer_cards > total_user_cards
-    return DEALER_NAME, false
+    return DEALER_NAME
   end
   nil
 end
@@ -96,14 +96,10 @@ def alternate_player(current_player)
   end
 end
 
-def display_winner_with_busted(winner, opponent_busted)
+def display_winner(winner)
   puts ""
   puts "*********************************"
   if winner
-    if opponent_busted
-      busted_opponent = alternate_player(winner)
-      puts "!!! #{busted_opponent} Busted !!!"
-    end
     puts "!!! The winner of this round is: #{winner} !!!"
   else
     puts "!!! It's a tie in this round !!!"
@@ -167,10 +163,9 @@ loop do
     deal_cards(deck, user_cards)
     deal_cards(deck, dealer_cards)
 
-    sample_dealer_card = dealer_cards.sample
     prompt ""
     prompt "One of the dealer card is:"
-    prompt "\t - #{SUITS[sample_dealer_card[0]]} of value #{sample_dealer_card[1]}"
+    prompt "\t - #{SUITS[dealer_cards[0][0]]} of value #{dealer_cards[0][1]}"
     prompt ""
 
     # player turn
@@ -198,8 +193,13 @@ loop do
     clean_screen
     display_cards(user_cards, PLAYER_NAME)
     display_cards(dealer_cards, DEALER_NAME)
-    winner, busted = detect_winner_with_busted(user_cards, dealer_cards)
-    display_winner_with_busted(winner, busted)
+    if busted?(user_cards)
+      prompt "!!! #{PLAYER_NAME} is busted !!!"
+    elsif busted?(dealer_cards)
+      prompt "!!! #{DEALER_NAME} is busted !!!"
+    end
+    winner = detect_winner(user_cards, dealer_cards)
+    display_winner(winner)
     count_score(winner, scores) if winner
     display_round_score(scores)
     break if scores[:player] == 5 || scores[:dealer] == 5
