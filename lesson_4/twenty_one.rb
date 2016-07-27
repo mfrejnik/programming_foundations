@@ -2,8 +2,8 @@ require 'pry'
 require 'io/console'
 HIT = "Hit".freeze
 STAY = "Stay".freeze
-TOTAL_PLAYER = 21.freeze
-TOTAL_DEALER = 17.freeze
+TOTAL_PLAYER = 21
+TOTAL_DEALER = 17
 SUITS = { "S" => "Spades",
           "H" => "Hearts",
           "D" => "Diamonds",
@@ -84,9 +84,8 @@ def detect_winner_with_busted(user_cards, dealer_cards)
     return PLAYER_NAME, false
   elsif total_dealer_cards > total_user_cards
     return DEALER_NAME, false
-  else
-    nil
   end
+  nil
 end
 
 def alternate_player(current_player)
@@ -156,7 +155,6 @@ def display_welcome_message
   puts "The dealer is a computer and whoever reach 5 points, wins."
   puts "There is no score for a tie added."
 end
-
 
 loop do
   scores = { player: 0, dealer: 0 }
