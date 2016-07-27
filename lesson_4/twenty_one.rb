@@ -5,7 +5,9 @@ SUITS = { "S" => "Spades",
           "H" => "Hearts",
           "D" => "Diamonds",
           "C" => "Clubs" }.freeze
-
+RANKS = %w(A 2 3 4 5 6 7 8 9 10 J Q K).freeze
+PLAYER_NAME = "Player".freeze
+DEALER_NAME = "Dealer".freeze
 def prompt(msg)
   puts "=> #{msg}"
 end
@@ -38,9 +40,8 @@ end
 
 def initialize_deck
   stack = []
-  ranks = %w(A 2 3 4 5 6 7 8 9 10 J Q K)
   SUITS.each_key do |suit|
-    ranks.each { |rank| stack << [suit, rank] }
+    RANKS.each { |rank| stack << [suit, rank] }
   end
   stack
 end
@@ -56,10 +57,7 @@ def hit(deck, current_player_cards)
 end
 
 def busted?(cards)
-  if total(cards) > 21
-    return true
-  end
-  false
+  total(cards) > 21
 end
 
 def display_cards(cards, player_name)
@@ -116,26 +114,26 @@ loop do
   prompt "\t - #{SUITS[sample_dealer_card[0]]} of value #{sample_dealer_card[1]}"
   prompt ""
 
+  # player turn
   answer = nil
   loop do
-    display_cards(user_cards, "Player")
+    display_cards(user_cards, PLAYER_NAME)
     prompt "Are you #{HIT} or #{STAY}?"
     answer = gets.chomp.capitalize
     hit(deck, user_cards) unless answer == STAY
     break if answer == STAY || busted?(user_cards)
   end
 
-  if busted?(user_cards)
-    display_winner(user_cards, dealer_cards)
-  else
+  unless busted?(user_cards)
+    # dealer turn
     loop do
       hit(deck, dealer_cards)
       break if total(dealer_cards) >= 17 || busted?(dealer_cards)
     end
   end
 
-  display_cards(user_cards, "Player")
-  display_cards(dealer_cards, "Dealer")
+  display_cards(user_cards, PLAYER_NAME)
+  display_cards(dealer_cards, DEALER_NAME)
   display_winner(user_cards, dealer_cards)
   prompt "Do you want to play again? (y/yes or n/no)"
   break unless another_game?
