@@ -43,7 +43,7 @@ def initialize_deck
   SUITS.each_key do |suit|
     RANKS.each { |rank| stack << [suit, rank] }
   end
-  stack
+  stack.shuffle
 end
 
 def deal_cards(deck, current_player_cards)
@@ -118,10 +118,14 @@ loop do
   answer = nil
   loop do
     display_cards(user_cards, PLAYER_NAME)
-    prompt "Are you #{HIT} or #{STAY}?"
-    answer = gets.chomp.capitalize
-    hit(deck, user_cards) unless answer == STAY
-    break if answer == STAY || busted?(user_cards)
+    loop do
+      prompt "Are you #{HIT} or #{STAY}? Choose (h) or (s) letter."
+      answer = gets.chomp.downcase
+      break if ['h', 's'].include?(answer)
+      prompt "You must choose only either letter 'h' or 's'."
+    end
+    hit(deck, user_cards) unless answer == 's'
+    break if answer == 's' || busted?(user_cards)
   end
 
   unless busted?(user_cards)
