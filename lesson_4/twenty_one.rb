@@ -2,6 +2,8 @@ require 'pry'
 require 'io/console'
 HIT = "Hit".freeze
 STAY = "Stay".freeze
+TOTAL_PLAYER = 21.freeze
+TOTAL_DEALER = 17.freeze
 SUITS = { "S" => "Spades",
           "H" => "Hearts",
           "D" => "Diamonds",
@@ -33,7 +35,7 @@ def total(cards)
   end
 
   values.select { |value| value == "A" }.count.times do
-    sum -= 10 if sum > 21
+    sum -= 10 if sum > TOTAL_PLAYER
   end
 
   sum
@@ -58,7 +60,7 @@ def hit(deck, current_player_cards)
 end
 
 def busted?(cards)
-  total(cards) > 21
+  total(cards) > TOTAL_PLAYER
 end
 
 def display_cards(cards, player_name)
@@ -191,7 +193,7 @@ loop do
       # dealer turn
       loop do
         hit(deck, dealer_cards)
-        break if total(dealer_cards) >= 17 || busted?(dealer_cards)
+        break if total(dealer_cards) >= TOTAL_DEALER || busted?(dealer_cards)
       end
     end
 
@@ -200,12 +202,12 @@ loop do
     display_cards(dealer_cards, DEALER_NAME)
     winner, busted = detect_winner_with_busted(user_cards, dealer_cards)
     display_winner_with_busted(winner, busted)
-    count_score(winner, scores)
+    count_score(winner, scores) if winner
     display_round_score(scores)
-    break if scores[:player] == 5 || scores[:computer] == 5
+    break if scores[:player] == 5 || scores[:dealer] == 5
   end
   display_match_winner(scores)
   prompt "Do you want to play again? (y/yes or n/no)"
   break unless another_game?
 end
-prompt "Thank You for playing 21!"
+prompt "Thank You for playing #{TOTAL_PLAYER}!"
