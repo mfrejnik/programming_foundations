@@ -184,9 +184,8 @@ loop do
 
     unless busted?(user_cards)
       # dealer turn
-      loop do
+      until total(dealer_cards) >= TOTAL_DEALER
         hit(deck, dealer_cards)
-        break if total(dealer_cards) >= TOTAL_DEALER || busted?(dealer_cards)
       end
     end
 
